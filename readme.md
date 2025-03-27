@@ -1,7 +1,7 @@
 
-# Web Projects Collection
+# Quick QR
 
-A collection of web-based projects featuring an endless RPG game and a QR code generator, both hosted on GitHub Pages.
+Easily generate qr code with this tool
 
 ## 📂 Project Structure
 
