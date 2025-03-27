@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oru QR code edukatte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(76, 201, 240, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin-top: 2rem;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        h1 {
+            color: #4cc9f0;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #4cc9f0;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #f72585;
+            box-shadow: 0 0 15px rgba(247, 37, 133, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #4cc9f0, #3a86ff);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .qr-container {
+            display: none;
+            justify-content: center;
+            margin: 2rem 0;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(76, 201, 240, 0.3);
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #f72585, #7209b7);
+            margin-top: 1rem;
+        }
+
+        footer {
+            margin-top: auto;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            button {
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Neon QR Generator</h1>
+        
+        <div class="input-group">
+            <input type="url" id="urlInput" placeholder="Enter URL here...">
+        </div>
+
+        <div class="button-group">
+            <button onclick="generateQR()">Generate QR</button>
+            <button class="download-btn" onclick="downloadQR()" id="downloadBtn" disabled>Download</button>
+        </div>
+
+        <div class="qr-container" id="qrContainer">
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
+    <footer>
+        Made with ❤️ using HTML, CSS & JavaScript
+    </footer>
+ <script>
+        let qrInstance = null;
+
+        function generateQR() {
+            const url = document.getElementById('urlInput').value;
+            const qrContainer = document.getElementById('qrContainer');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (!url) {
+                alert('Please enter a URL!');
+                return;
+            }
+
+            // Clear previous QR code
+            if (qrInstance) {
+                qrInstance.clear();
+                qrContainer.innerHTML = ''; // Clear the container
+            }
+
+            // Create new QR code
+            qrInstance = new QRCode(qrContainer, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: "#1a1a2e",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Show container and enable download
+            qrContainer.style.display = 'flex';
+            downloadBtn.disabled = false;
+
+            // Add generated class for animation
+            qrContainer.classList.add('generated');
+        }
+
+        function downloadQR() {
+            const canvas = qrContainer.querySelector('canvas');
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = image;
+            link.click();
+        }
+
+        // Input validation
+        document.getElementById('urlInput').addEventListener('input', function(e) {
+            document.querySelector('.button-group button').disabled = !e.target.value;
+        });
+    </script>
+</body>
+</html>
